@@ -1,0 +1,34 @@
+# ===============================
+# PHP / Laravel
+# ===============================
+*.php linguist-language=PHP
+*.blade.php linguist-language=PHP
+/routes/** linguist-language=PHP
+/app/** linguist-language=PHP
+/config/** linguist-language=PHP
+/database/** linguist-language=PHP
+
+# ===============================
+# Frontend / React
+# ===============================
+*.js linguist-language=JavaScript
+*.jsx linguist-language=JavaScript
+*.ts linguist-language=TypeScript
+*.tsx linguist-language=TypeScript
+/src/** linguist-language=JavaScript
+/public/** linguist-language=HTML
+
+# ===============================
+# Styles
+# ===============================
+*.css linguist-language=CSS
+*.scss linguist-language=SCSS
+
+# ===============================
+# Ignore files for language stats
+# ===============================
+*.json linguist-vendored
+*.lock linguist-vendored
+*.env linguist-vendored
+/node_modules/** linguist-vendored
+/vendor/** linguist-vendored
