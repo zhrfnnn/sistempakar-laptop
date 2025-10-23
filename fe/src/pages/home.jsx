@@ -1,6 +1,8 @@
 import { Typography, Stack, Paper, TextField, Button } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import LaptopImage from "../assets/laptop.png";
+import { theme } from "../theme";
 
 export default function App() {
   const [name, setName] = useState("");
@@ -18,30 +20,48 @@ export default function App() {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
+        backgroundColor: (theme) => theme.palette.primary.main,
+        color: (theme) => theme.palette.white.main,
+        p: 2,
       }}
     >
-      <Paper
+      <Stack
+        spacing={5}
         sx={{
-          paddingY: 2,
-          paddingX: 4,
+          p: 2,
         }}
       >
-        <Stack spacing={2}>
-          <Typography variant="h5">
-            Halo,
-            <br /> Selamat datang di Dr.Consul !
+        <Stack spacing={0.5}>
+          <Typography variant="h3" sx={{ fontWeight: 600, color: "white" }}>
+            Temukan Laptop Ideal Anda
+            <br />
+            dalam Hitungan Detik
           </Typography>
-          <TextField
-            label="Masukkan nama kamu"
-            variant="outlined"
-            size="small"
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Button variant="contained" onClick={handleClick}>
-            Mulai Konsultasi
-          </Button>
+          <Typography sx={{ color: "white" }}>
+            Sistem Pakar berbasis kecerdasan untuk merekomendasikan
+            <br />
+            laptop terbaik sesuai kebutuhan dan anggaran Anda.
+          </Typography>
         </Stack>
-      </Paper>
+        <Button
+          variant="contained"
+          color="tertiary"
+          onClick={handleClick}
+          sx={{
+            width: "fit-content",
+            alignSelf: "flex-start",
+            textTransform: "none",
+          }}
+        >
+          Mulai Rekomendasi
+        </Button>
+      </Stack>
+      <img
+        src={LaptopImage}
+        width={"400px"}
+        // height={"150px"}
+        style={{ objectFit: "contain" }}
+      />
     </Stack>
   );
 }
