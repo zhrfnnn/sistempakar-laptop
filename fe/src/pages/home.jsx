@@ -1,11 +1,10 @@
-import { Typography, Stack, Paper, TextField, Button } from "@mui/material";
-import { useState } from "react";
+import { Typography, Stack, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import LaptopImage from "../assets/laptop.png";
-import { theme } from "../theme";
+import { useUser } from "../context/context";
 
 export default function App() {
-  const [name, setName] = useState("");
+  const { name } = useUser();
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -33,6 +32,8 @@ export default function App() {
       >
         <Stack spacing={0.5}>
           <Typography variant="h3" sx={{ fontWeight: 600, color: "white" }}>
+            Hi {name}!
+            <br />
             Temukan Laptop Ideal Anda
             <br />
             dalam Hitungan Detik
@@ -56,12 +57,7 @@ export default function App() {
           Mulai Rekomendasi
         </Button>
       </Stack>
-      <img
-        src={LaptopImage}
-        width={"400px"}
-        // height={"150px"}
-        style={{ objectFit: "contain" }}
-      />
+      <img src={LaptopImage} width={"400px"} style={{ objectFit: "contain" }} />
     </Stack>
   );
 }

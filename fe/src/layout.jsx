@@ -1,7 +1,9 @@
 import { Tabs, Tab, Box, AppBar, Toolbar, Typography } from "@mui/material";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
+import { useUser } from "./context/context";
 
 export default function Layout() {
+  const { setName } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,7 +22,8 @@ export default function Layout() {
         navigate("/recommendation");
         break;
       case 2:
-        navigate("/about");
+        setName("");
+        navigate("/");
         break;
       default:
         break;
@@ -37,11 +40,6 @@ export default function Layout() {
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            {/* <img
-              src="/logo192.png"
-              alt="Logo"
-              style={{ width: 32, height: 32 }}
-            /> */}
             <Typography variant="h6" color="white" fontWeight="bold">
               PakarLaptop
             </Typography>
@@ -60,8 +58,8 @@ export default function Layout() {
             }}
           >
             <Tab label="Home" />
-            <Tab label="How It Works" />
-            <Tab label="About" />
+            <Tab label="Recommend" />
+            <Tab label="Exit" />
           </Tabs>
         </Toolbar>
       </AppBar>

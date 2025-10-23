@@ -1,19 +1,25 @@
 import {
   Autocomplete,
   Button,
+  Paper,
+  Stack,
+  Step,
+  StepLabel,
+  Stepper,
+  TextField,
+  Typography,
   Dialog,
   DialogContent,
   DialogTitle,
-  Paper,
-  Stack,
-  TextField,
-  Typography,
+  Grid,
 } from "@mui/material";
+import Masonry from "@mui/lab/Masonry";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import api from "../api/axios";
 
 export default function App() {
+  const [activeStep, setActiveStep] = useState(0);
   const [data, setData] = useState([]);
   const [kebutuhan, setKebutuhan] = useState(null);
   const [anggaran, setAnggaran] = useState(null);
@@ -24,6 +30,8 @@ export default function App() {
   const location = useLocation();
   const name = location.state?.name || "Guest";
 
+  const steps = ["Pilih Kebutuhan", "Pilih Anggaran", "Pilih Preferensi"];
+
   const listKebutuhan = [
     "Desain Grafis",
     "Coding",
@@ -31,6 +39,7 @@ export default function App() {
     "Kantor",
     "Kuliah",
   ];
+
   const listAnggaran = [
     { label: "Rp5.000.000 - Rp6.000.000", min: 5000000, max: 6000000 },
     { label: "Rp6.000.000 - Rp9.000.000", min: 6000000, max: 9000000 },
@@ -38,35 +47,45 @@ export default function App() {
     { label: "Rp11.000.000 - Rp13.000.000", min: 11000000, max: 13000000 },
     { label: "Rp13.000.000 - Rp15.000.000", min: 13000000, max: 15000000 },
   ];
-  const listPreferensi = ["Ringan", "Kokoh", "Baterai", "Tipis", "Game"];
 
-  const handleSubmit = () => {
-    if (!kebutuhan || !anggaran) {
-      alert("Silakan pilih kebutuhan dan anggaran terlebih dahulu!");
-      return;
-    }
-    const reason = [...preferensi].join(", ");
-    const min = anggaran?.min ?? 0;
-    const max = anggaran?.max ?? 99999999;
-    getRecommendation(min, max, reason);
-  };
+  const listPreferensi = ["Ringan", "Kokoh", "Baterai", "Tipis", "Gaming"];
 
   const getImageUrl = (name) => {
     const basePath = "http://localhost:8000/image/";
     return `${basePath}${encodeURIComponent(name)}`;
   };
 
-  const getRecommendation = async (minPrice, maxPrice, reason) => {
+  const getRecommendation = async () => {
+    const reason = [...preferensi].join(", ");
+    const min = anggaran?.min ?? 0;
+    const max = anggaran?.max ?? 99999999;
     try {
       const res = await api.post("/recommendation", {
-        min_harga: minPrice,
-        max_harga: maxPrice,
+        min_harga: min,
+        max_harga: max,
         alasan: reason,
       });
       setData(res.data);
+      setActiveStep((prev) => prev + 1);
     } catch (err) {
       console.error("Fetch failed:", err);
     }
+  };
+
+  const handleNext = () => {
+    if (activeStep === 0 && !kebutuhan)
+      return alert("Silakan pilih kebutuhan!");
+    if (activeStep === 1 && !anggaran) return alert("Silakan pilih anggaran!");
+
+    if (activeStep === steps.length - 1) {
+      getRecommendation();
+    } else {
+      setActiveStep((prev) => prev + 1);
+    }
+  };
+
+  const handleBack = () => {
+    setActiveStep((prev) => prev - 1);
   };
 
   const handleDetail = async (id) => {
@@ -79,133 +98,159 @@ export default function App() {
     }
   };
 
+  const renderStepContent = (step) => {
+    switch (step) {
+      case 0:
+        return (
+          <Autocomplete
+            disablePortal
+            options={listKebutuhan}
+            value={kebutuhan}
+            onChange={(e, val) => setKebutuhan(val)}
+            renderInput={(params) => (
+              <TextField {...params} placeholder="Pilih kebutuhan" />
+            )}
+          />
+        );
+      case 1:
+        return (
+          <Autocomplete
+            disablePortal
+            options={listAnggaran}
+            getOptionLabel={(opt) => opt.label}
+            value={anggaran}
+            onChange={(e, val) => setAnggaran(val)}
+            renderInput={(params) => (
+              <TextField {...params} placeholder="Pilih anggaran" />
+            )}
+          />
+        );
+      case 2:
+        return (
+          <Autocomplete
+            disablePortal
+            multiple
+            options={listPreferensi}
+            value={preferensi}
+            onChange={(e, val) => setPreferensi(val)}
+            renderInput={(params) => (
+              <TextField {...params} placeholder="Pilih preferensi tambahan" />
+            )}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <Stack p={2} alignItems="center">
-      <Typography variant="h4">Sistem Pakar Rekomendasi Laptop</Typography>
-      <Typography width="50%" variant="h5" align="center">
-        Halo {name}! Aku akan bantu kamu untuk mencari laptop yang sedang kamu
-        butuhkan, pilih jenis dan kategorinya yaa...
-      </Typography>
+    <Stack p={3} alignItems="center">
+      <Stack sx={{ width: "100%", px: 3 }}>
+        <Stepper activeStep={activeStep} alternativeLabel>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel sx={{ textTransform: "none", fontWeight: "bold" }}>
+                {label}
+              </StepLabel>
+            </Step>
+          ))}
+        </Stepper>
 
-      <Stack
-        direction="row"
-        sx={{
-          width: "100%",
-          height: "80vh",
-          marginTop: 3,
-          gap: 2,
-        }}
-      >
-        <Stack sx={{ width: "50%", alignItems: "flex-end" }}>
-          <Paper
-            sx={{ width: "80%", height: "fit-content", p: 2, overflow: "auto" }}
-          >
-            <Stack spacing={3}>
-              <Stack>
-                <Typography fontWeight="bold">Kebutuhan</Typography>
-                <Autocomplete
-                  disablePortal
-                  options={listKebutuhan}
-                  value={kebutuhan}
-                  onChange={(e, val) => setKebutuhan(val)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      size="small"
-                      placeholder="Pilih kebutuhan"
-                    />
-                  )}
-                />
+        <Stack spacing={3} mt={4} alignItems="center">
+          {activeStep < steps.length ? (
+            <>
+              <Typography variant="h6" fontWeight="bold">
+                Langkah {activeStep + 1}. {steps[activeStep]}
+              </Typography>
+              <Stack sx={{ width: "60%" }}>
+                {renderStepContent(activeStep)}
               </Stack>
-              <Stack>
-                <Typography fontWeight="bold">Anggaran</Typography>
-                <Autocomplete
-                  disablePortal
-                  options={listAnggaran}
-                  getOptionLabel={(opt) => opt.label}
-                  value={anggaran}
-                  onChange={(e, val) => setAnggaran(val)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      size="small"
-                      placeholder="Pilih anggaran"
-                    />
-                  )}
-                />
+              <Stack direction="row" spacing={2} mt={2}>
+                {activeStep > 0 && (
+                  <Button variant="outlined" onClick={handleBack}>
+                    Kembali
+                  </Button>
+                )}
+                <Button variant="contained" onClick={handleNext}>
+                  {activeStep === steps.length - 1
+                    ? "Lihat Rekomendasi"
+                    : "Lanjut"}
+                </Button>
               </Stack>
-              <Stack>
-                <Typography fontWeight="bold">Preferensi Tambahan</Typography>
-                <Autocomplete
-                  disablePortal
-                  multiple
-                  options={listPreferensi}
-                  value={preferensi}
-                  onChange={(e, val) => setPreferensi(val)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      size="small"
-                      placeholder="Pilih preferensi"
-                    />
-                  )}
-                />
-              </Stack>
-              <Button variant="contained" onClick={handleSubmit}>
-                Lihat Rekomendasi
-              </Button>
-            </Stack>
-          </Paper>
+            </>
+          ) : null}
         </Stack>
+      </Stack>
 
+      {activeStep === steps.length && (
         <Stack
           sx={{
-            width: "50%",
-            flex: 1,
+            width: "100%",
+            maxHeight: "75vh",
             overflow: "auto",
-            paddingLeft: 2,
-            boxSizing: "border-box",
+            alignItems: "center",
           }}
         >
           <Typography variant="h6" fontWeight="bold" mb={2}>
             Hasil Rekomendasi
           </Typography>
-
           {data.length === 0 ? (
-            <Typography color="text.secondary">Belum ada hasil.</Typography>
+            <Typography color="text.secondary">
+              Tidak ditemukan hasil.
+            </Typography>
           ) : (
-            data.map((item, idx) => (
-              <Paper key={idx} sx={{ width: "80%", p: 1.5, mb: 2 }}>
-                <Stack spacing={2}>
-                  <Stack direction="row" spacing={2}>
-                    <img
-                      src={getImageUrl(item.nama)}
-                      alt={item.nama}
-                      style={{
-                        width: "150px",
-                        objectFit: "contain",
-                      }}
-                    />
-                    <Stack>
-                      <Typography fontWeight="bold">{item.nama}</Typography>
-                      <Typography>{item.spesifikasi}</Typography>
-                      <Typography fontSize="20px" fontWeight="bold">
-                        Rp{item.harga.toLocaleString()}
-                      </Typography>
+            <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={2}>
+              {data.map((item, idx) => (
+                <Paper
+                  key={idx}
+                  sx={{
+                    p: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Stack spacing={2}>
+                    <Stack direction="row" spacing={2} alignItems="start">
+                      <img
+                        src={getImageUrl(item.nama)}
+                        alt={item.nama}
+                        style={{ width: "150px", objectFit: "contain" }}
+                      />
+                      <Stack>
+                        <Typography fontWeight="bold">{item.nama}</Typography>
+                        <Typography>{item.spesifikasi}</Typography>
+                        <Typography fontSize="20px" fontWeight="bold">
+                          Rp{item.harga.toLocaleString()}
+                        </Typography>
+                      </Stack>
                     </Stack>
+                    <Button
+                      variant="contained"
+                      onClick={() => handleDetail(item.id)}
+                    >
+                      Detail
+                    </Button>
                   </Stack>
-                  <Button
-                    variant="contained"
-                    onClick={() => handleDetail(item.id)}
-                  >
-                    Detail
-                  </Button>
-                </Stack>
-              </Paper>
-            ))
+                </Paper>
+              ))}
+            </Masonry>
           )}
+          <Button
+            variant="outlined"
+            sx={{ mt: 3 }}
+            onClick={() => {
+              setActiveStep(0);
+              setData([]);
+              setKebutuhan(null);
+              setAnggaran(null);
+              setPreferensi([]);
+            }}
+          >
+            Retry
+          </Button>
         </Stack>
-      </Stack>
+      )}
 
       <Dialog
         open={open}
@@ -243,7 +288,7 @@ export default function App() {
                   )
                 }
               >
-                Beli di Tokopedia
+                Tokopedia
               </Button>
               <Button
                 variant="contained"
@@ -259,10 +304,10 @@ export default function App() {
                   )
                 }
               >
-                Beli di Shopee
+                Shopee
               </Button>
             </Stack>
-            <Button mt={2} variant="outlined" onClick={() => setOpen(false)}>
+            <Button variant="outlined" onClick={() => setOpen(false)}>
               Kembali
             </Button>
           </Stack>
