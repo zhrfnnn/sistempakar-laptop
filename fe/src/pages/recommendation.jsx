@@ -11,33 +11,55 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Grid,
 } from "@mui/material";
 import Masonry from "@mui/lab/Masonry";
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
 import api from "../api/axios";
+
+import GamingIcon from "@mui/icons-material/SportsEsports";
+import DesainIcon from "@mui/icons-material/Brush";
+import CodingIcon from "@mui/icons-material/Code";
+import WorkIcon from "@mui/icons-material/Work";
+import CollegeIcon from "@mui/icons-material/School";
 
 export default function App() {
   const [activeStep, setActiveStep] = useState(0);
   const [data, setData] = useState([]);
   const [kebutuhan, setKebutuhan] = useState(null);
   const [anggaran, setAnggaran] = useState(null);
-  const [preferensi, setPreferensi] = useState([]);
   const [detailLaptop, setDetailLaptop] = useState(null);
   const [open, setOpen] = useState(false);
 
-  const location = useLocation();
-  const name = location.state?.name || "Guest";
+  const steps = ["Pilih Kebutuhan", "Pilih Anggaran", "Hasil"];
 
-  const steps = ["Pilih Kebutuhan", "Pilih Anggaran", "Pilih Preferensi"];
+  const stepLength = steps.length - 1;
 
   const listKebutuhan = [
-    "Desain Grafis",
-    "Coding",
-    "Gaming",
-    "Kantor",
-    "Kuliah",
+    {
+      title: "Desain",
+      content: "Untuk desain grafis dan rendering yang lancar.",
+      logo: DesainIcon,
+    },
+    {
+      title: "Coding",
+      content: "Fokus dengan multitask dan coding berat.",
+      logo: CodingIcon,
+    },
+    {
+      title: "Gaming",
+      content: "Performa tinggi untuk bermain game tanpa lag.",
+      logo: GamingIcon,
+    },
+    {
+      title: "Kantor",
+      content: "Efisien untuk pekerjaan harian seperti dokumen dan meeting.",
+      logo: WorkIcon,
+    },
+    {
+      title: "Kuliah",
+      content: "Ringan dan praktis untuk belajar serta tugas kampus.",
+      logo: CollegeIcon,
+    },
   ];
 
   const listAnggaran = [
@@ -48,15 +70,13 @@ export default function App() {
     { label: "Rp13.000.000 - Rp15.000.000", min: 13000000, max: 15000000 },
   ];
 
-  const listPreferensi = ["Ringan", "Kokoh", "Baterai", "Tipis", "Gaming"];
-
   const getImageUrl = (name) => {
     const basePath = "http://localhost:8000/image/";
     return `${basePath}${encodeURIComponent(name)}`;
   };
 
   const getRecommendation = async () => {
-    const reason = [...preferensi].join(", ");
+    const reason = kebutuhan;
     const min = anggaran?.min ?? 0;
     const max = anggaran?.max ?? 99999999;
     try {
@@ -66,7 +86,7 @@ export default function App() {
         alasan: reason,
       });
       setData(res.data);
-      setActiveStep((prev) => prev + 1);
+      setActiveStep((prev) => prev + 2);
     } catch (err) {
       console.error("Fetch failed:", err);
     }
@@ -77,7 +97,7 @@ export default function App() {
       return alert("Silakan pilih kebutuhan!");
     if (activeStep === 1 && !anggaran) return alert("Silakan pilih anggaran!");
 
-    if (activeStep === steps.length - 1) {
+    if (activeStep === stepLength - 1) {
       getRecommendation();
     } else {
       setActiveStep((prev) => prev + 1);
@@ -102,15 +122,92 @@ export default function App() {
     switch (step) {
       case 0:
         return (
-          <Autocomplete
-            disablePortal
-            options={listKebutuhan}
-            value={kebutuhan}
-            onChange={(e, val) => setKebutuhan(val)}
-            renderInput={(params) => (
-              <TextField {...params} placeholder="Pilih kebutuhan" />
-            )}
-          />
+          <Stack spacing={2} direction="row" sx={{ width: "100%" }}>
+            {listKebutuhan.map((kebutuhanItem) => {
+              const Icon = kebutuhanItem.logo;
+              return (
+                <Paper
+                  sx={{
+                    flex: 1,
+                    borderRadius: 4,
+                    bgcolor: (theme) =>
+                      kebutuhan == kebutuhanItem.title
+                        ? theme.palette.primary.main
+                        : theme.palette.white.main,
+                  }}
+                >
+                  <Stack
+                    spacing={4}
+                    sx={{
+                      alignItems: "center",
+                      p: 2,
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Icon
+                      sx={{
+                        fontSize: 48,
+                        color: (theme) =>
+                          kebutuhan == kebutuhanItem.title
+                            ? theme.palette.white.main
+                            : theme.palette.primary.main,
+                      }}
+                    />
+                    <Stack alignItems="center">
+                      <Stack direction="row" spacing={1}>
+                        <Icon
+                          sx={{
+                            color: (theme) =>
+                              kebutuhan == kebutuhanItem.title
+                                ? theme.palette.white.main
+                                : theme.palette.primary.main,
+                          }}
+                        />
+                        <Typography
+                          variant="h6"
+                          fontWeight={700}
+                          sx={{
+                            color: (theme) =>
+                              kebutuhan == kebutuhanItem.title
+                                ? theme.palette.white.main
+                                : theme.palette.primary.main,
+                          }}
+                        >
+                          {kebutuhanItem.title}
+                        </Typography>
+                      </Stack>
+                      <Typography
+                        align="center"
+                        variant="subtitle2"
+                        sx={{
+                          color: (theme) =>
+                            kebutuhan == kebutuhanItem.title
+                              ? theme.palette.white.main
+                              : theme.palette.primary.main,
+                        }}
+                      >
+                        {kebutuhanItem.content}
+                      </Typography>
+                    </Stack>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      sx={{
+                        textTransform: "none",
+                        visibility:
+                          kebutuhan == kebutuhanItem.title
+                            ? "hidden"
+                            : "visible",
+                      }}
+                      onClick={() => setKebutuhan(kebutuhanItem.title)}
+                    >
+                      Pilih
+                    </Button>
+                  </Stack>
+                </Paper>
+              );
+            })}
+          </Stack>
         );
       case 1:
         return (
@@ -122,19 +219,6 @@ export default function App() {
             onChange={(e, val) => setAnggaran(val)}
             renderInput={(params) => (
               <TextField {...params} placeholder="Pilih anggaran" />
-            )}
-          />
-        );
-      case 2:
-        return (
-          <Autocomplete
-            disablePortal
-            multiple
-            options={listPreferensi}
-            value={preferensi}
-            onChange={(e, val) => setPreferensi(val)}
-            renderInput={(params) => (
-              <TextField {...params} placeholder="Pilih preferensi tambahan" />
             )}
           />
         );
@@ -157,22 +241,30 @@ export default function App() {
         </Stepper>
 
         <Stack spacing={3} mt={4} alignItems="center">
-          {activeStep < steps.length ? (
+          {activeStep < stepLength ? (
             <>
               <Typography variant="h6" fontWeight="bold">
                 Langkah {activeStep + 1}. {steps[activeStep]}
               </Typography>
-              <Stack sx={{ width: "60%" }}>
+              <Stack sx={{ width: "100%" }}>
                 {renderStepContent(activeStep)}
               </Stack>
               <Stack direction="row" spacing={2} mt={2}>
                 {activeStep > 0 && (
-                  <Button variant="outlined" onClick={handleBack}>
+                  <Button
+                    variant="outlined"
+                    onClick={handleBack}
+                    sx={{ textTransform: "none" }}
+                  >
                     Kembali
                   </Button>
                 )}
-                <Button variant="contained" onClick={handleNext}>
-                  {activeStep === steps.length - 1
+                <Button
+                  variant="contained"
+                  onClick={handleNext}
+                  sx={{ textTransform: "none" }}
+                >
+                  {activeStep === stepLength - 1
                     ? "Lihat Rekomendasi"
                     : "Lanjut"}
                 </Button>
@@ -182,7 +274,7 @@ export default function App() {
         </Stack>
       </Stack>
 
-      {activeStep === steps.length && (
+      {activeStep === stepLength + 1 && (
         <Stack
           sx={{
             width: "100%",
@@ -244,7 +336,6 @@ export default function App() {
               setData([]);
               setKebutuhan(null);
               setAnggaran(null);
-              setPreferensi([]);
             }}
           >
             Retry
