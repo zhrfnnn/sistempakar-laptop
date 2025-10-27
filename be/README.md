@@ -1,61 +1,118 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Pakar Laptop (Laravel)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Project ini dibuat menggunakan **Laravel**, salah satu framework PHP yang umum dipakai untuk mengembangkan aplikasi web.  
+Tujuan dari project ini adalah untuk membantu pengguna menentukan laptop yang sesuai kebutuhan berdasarkan kriteria tertentu.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tentang Laravel
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Laravel adalah framework PHP dengan konsep **MVC (Model-View-Controller)** yang membuat struktur kode jadi lebih rapi dan mudah dipelihara.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Model** → mengatur data dan koneksi ke database.  
+- **View** → menampilkan tampilan yang dilihat oleh pengguna.  
+- **Controller** → tempat logika utama dijalankan dan jadi penghubung antara Model dan View.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Struktur Project
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Struktur utamanya kurang lebih seperti ini:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```
+app/
+├── Http/
+│ ├── Controllers/
+│ │ └── LaptopController.php
+├── Models/
+│ └── Laptop.php
+database/
+└── migrations/
+resources/
+└── views/
+└── laptop/
+routes/
+└── web.php
+```
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Penjelasan Tiap Bagian
 
-### Premium Partners
+- **LaptopController.php**  
+  Berisi logika utama aplikasi, seperti mengambil data laptop dari database, menampilkan halaman, atau memproses hasil konsultasi pengguna.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- **Laptop.php (Model)**  
+  Mewakili tabel `laptop` di database `sistempakar_laptop`. Semua proses baca dan tulis data laptop dilakukan lewat model ini.
 
-## Contributing
+- **View (resources/views/laptop/...)**  
+  Bagian tampilan (HTML + Blade) yang akan muncul di browser.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **web.php (Routes)**  
+  Mengatur rute URL aplikasi, misalnya:
+  - `/` → halaman utama  
+  - `/laptop` → daftar laptop  
+  - `/recommend` → halaman sistem pakar
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Database
 
-## Security Vulnerabilities
+Nama database yang digunakan: **`sistempakar_laptop`**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Tabel utama: **`laptops`**
 
-## License
+Kolom yang digunakan umumnya meliputi:
+- `nama`  
+- `harga`  
+- `spesifikasi`  
+- `alasan`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Data di tabel ini digunakan oleh sistem untuk memberikan rekomendasi laptop kepada pengguna.
+
+---
+
+## Cara Menjalankan Project
+
+1. Pastikan sudah menginstal:
+   - PHP (minimal versi 8)
+   - Composer
+   - Database (MySQL atau MariaDB)
+2. Clone project ini:
+   ```bash
+   git clone <url-project-ini>
+   cd nama-folder-project
+3. Install dependensi Laravel:
+   ```bash
+   composer install
+4. Salin file environment:
+   ```bash
+   cp .env.example .env
+5. Generate app key:
+   ```bash
+   php artisan key:generate
+6. Atur koneksi database di file .env:
+   ```
+   DB_DATABASE=sistempakar_laptop
+   DB_USERNAME=root
+   DB_PASSWORD=
+7. Buat database sistempakar_laptop di MySQL atau MariaDB.
+Jika ada file migrasi, jalankan:
+   ```bash
+   php artisan migrate
+8. Jalankan server lokal:
+   ```bash
+   php artisan serve
+9. Buka browser dan akses:
+   ```bash
+   http://localhost:8000
+   ```
+
+## Cara Kerja Singkat
+
+Aplikasi ini bekerja dengan menanyakan kebutuhan pengguna — misalnya untuk gaming, kerja, atau kuliah.
+Sistem kemudian mencocokkan jawaban tersebut dengan data laptop di database, lalu menampilkan rekomendasi laptop yang paling sesuai.
+
+## Catatan
+
+Project ini dibuat untuk tujuan pembelajaran dan demonstrasi konsep sistem pakar sederhana.
+Struktur dan logika dapat dikembangkan lebih lanjut, misalnya dengan menambah kriteria, metode perhitungan, atau tampilan yang lebih interaktif.
