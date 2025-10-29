@@ -1,25 +1,26 @@
-# Sistem Pakar Laptop (Laravel)
+Sistem Pakar Laptop (Laravel)
 
-Project ini dibuat menggunakan **Laravel**, salah satu framework PHP yang umum dipakai untuk mengembangkan aplikasi web.  
+Project ini dibuat menggunakan Laravel, salah satu framework PHP yang umum dipakai untuk mengembangkan aplikasi web.  
 Tujuan dari project ini adalah untuk membantu pengguna menentukan laptop yang sesuai kebutuhan berdasarkan kriteria tertentu.
 
----
 
-## Tentang Laravel
+Tentang Laravel
+Laravel adalah framework PHP dengan konsep MVC (Model-View-Controller) yang membuat struktur kode jadi lebih rapi dan mudah dipelihara.
+## Laravel itu framework backend (pakai PHP) yang ngurus logika server, database, routing, autentikasi, dll.
+Tapi Laravel juga bisa mengirimkan data ke frontend (ReactJS) lewat API (biasanya pakai JSON).
 
-Laravel adalah framework PHP dengan konsep **MVC (Model-View-Controller)** yang membuat struktur kode jadi lebih rapi dan mudah dipelihara.
+## React bisa melakukan itu secara otomatis, tanpa reload halaman. Membuat tampilan web yang interaktif, cepat, dan mudah diatur.
 
-- **Model** → mengatur data dan koneksi ke database.  
-- **View** → menampilkan tampilan yang dilihat oleh pengguna.  
-- **Controller** → tempat logika utama dijalankan dan jadi penghubung antara Model dan View.
+## Vite itu alat build (seperti webpack versi modern) alat bantu supaya Laravel + React bisa jalan cepat dan rapi.
+Jadi Laravel = otak di belakang layar.
 
----
+Model → mengatur data dan koneksi ke database.  
+View → menampilkan tampilan yang dilihat oleh pengguna.  
+Controller → tempat logika utama dijalankan dan jadi penghubung antara Model dan View.
 
-## Struktur Project
-
+Struktur Project
 Struktur utamanya kurang lebih seperti ini:
 
-```
 app/
 ├── Http/
 │ ├── Controllers/
@@ -33,33 +34,33 @@ resources/
 └── laptop/
 routes/
 └── web.php
-```
 
 
-### Penjelasan Tiap Bagian
 
-- **LaptopController.php**  
+ Penjelasan Tiap Bagian
+
+-LaptopController.php
   Berisi logika utama aplikasi, seperti mengambil data laptop dari database, menampilkan halaman, atau memproses hasil konsultasi pengguna.
 
-- **Laptop.php (Model)**  
+- Laptop.php (Model)  
   Mewakili tabel `laptop` di database `sistempakar_laptop`. Semua proses baca dan tulis data laptop dilakukan lewat model ini.
 
-- **View (resources/views/laptop/...)**  
+- View (resources/views/laptop/..) 
   Bagian tampilan (HTML + Blade) yang akan muncul di browser.
 
-- **web.php (Routes)**  
+- web.php (Routes)  
   Mengatur rute URL aplikasi, misalnya:
   - `/` → halaman utama  
   - `/laptop` → daftar laptop  
   - `/recommend` → halaman sistem pakar
 
----
 
-## Database
 
-Nama database yang digunakan: **`sistempakar_laptop`**
+Database
 
-Tabel utama: **`laptops`**
+Nama database yang digunakan: `sistempakar_laptop`
+
+Tabel utama: *`laptops`
 
 Kolom yang digunakan umumnya meliputi:
 - `nama`  
@@ -69,9 +70,9 @@ Kolom yang digunakan umumnya meliputi:
 
 Data di tabel ini digunakan oleh sistem untuk memberikan rekomendasi laptop kepada pengguna.
 
----
 
-## Cara Menjalankan Project
+
+Cara Menjalankan Project
 
 1. Pastikan sudah menginstal:
    - PHP (minimal versi 8)
@@ -91,7 +92,7 @@ Data di tabel ini digunakan oleh sistem untuk memberikan rekomendasi laptop kepa
    ```bash
    php artisan key:generate
 6. Atur koneksi database di file .env:
-   ```
+  
    DB_DATABASE=sistempakar_laptop
    DB_USERNAME=root
    DB_PASSWORD=
@@ -107,12 +108,12 @@ Jika ada file migrasi, jalankan:
    http://localhost:8000
    ```
 
-## Cara Kerja Singkat
+Cara Kerja Singkat
 
 Aplikasi ini bekerja dengan menanyakan kebutuhan pengguna — misalnya untuk gaming, kerja, atau kuliah.
 Sistem kemudian mencocokkan jawaban tersebut dengan data laptop di database, lalu menampilkan rekomendasi laptop yang paling sesuai.
 
-## Catatan
+Catatan
 
 Project ini dibuat untuk tujuan pembelajaran dan demonstrasi konsep sistem pakar sederhana.
 Struktur dan logika dapat dikembangkan lebih lanjut, misalnya dengan menambah kriteria, metode perhitungan, atau tampilan yang lebih interaktif.
